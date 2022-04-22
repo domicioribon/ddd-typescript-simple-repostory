@@ -4,7 +4,11 @@
         "tslint:recommended"
     ],
     "jsRules": {},
-    "rules": {},
+    "rules": {
+        "no-empty": false,
+        "no-trailing-whitespace": false,
+        "no-string-literal": false
+    },
     "rulesDirectory": [],
     "typescript.suggestionActions.enabled": false
 }
