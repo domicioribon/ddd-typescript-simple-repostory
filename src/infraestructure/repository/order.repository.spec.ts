@@ -83,6 +83,7 @@ describe("Order repository test", () => {
   });
 
   it("should update an order", async () => {
+    // create initial order
     // create customer
     const customer = new Customer("123", "Customer 1");
     const address = new Address("Street 1", 1, "Zipcode 1", "City 1");
@@ -108,35 +109,51 @@ describe("Order repository test", () => {
     const order = new Order("123", "123", [ordemItem]);
     const orderRepository = new OrderRepository();
     await orderRepository.create(order);
-
+    
+    // start create itens to update order
     // create another customer
     const customer2 = new Customer("456", "Customer 2");
     const address2 = new Address("Street 2", 2, "Zipcode 2", "City 2");
     customer2.changeAddress(address2);
     await customerRepository.create(customer2);
 
+    // create another product
+    const product2 = new Product("100", "Product 2", 20);
+    await productRepository.create(product2);
+    
+    // create order_item
+    const newOrdemItem = new OrderItem(
+      "2",
+      product2.name,
+      product2.price,
+      product2.id,
+      5
+    );
+
+
     // update order
     order.changeCustomerId("456");
-    orderRepository.update(order);
+    order.changeItems([newOrdemItem]); // autaliza os itens e recalcula o total
+    await orderRepository.update(order);
 
     // find order
     const orderModel = await OrderModel.findOne({
       where: { id: order.id },
       include: ["items"],
     });
-
+    
     expect(orderModel.toJSON()).toStrictEqual({
       id: "123",
       customer_id: "456",
       total: order.total(),
       items: [
         {
-          id: ordemItem.id,
-          name: ordemItem.name,
-          price: ordemItem.price,
-          quantity: ordemItem.quantity,
+          id: newOrdemItem.id,
+          name: newOrdemItem.name,
+          price: newOrdemItem.price,
+          quantity: newOrdemItem.quantity,
           order_id: "123",
-          product_id: "123",
+          product_id: "100",
         },
       ],
     });

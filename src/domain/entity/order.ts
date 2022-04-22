@@ -29,6 +29,11 @@ export default class Order {
   changeCustomerId(customerId: string): void {
     this._customerId = customerId;
   }
+  
+  changeItems(items: OrderItem[]): void {
+    this._items = items;
+    this._total = this.total();
+  }
 
   validate(): boolean {
     if (this._id.length === 0) {
